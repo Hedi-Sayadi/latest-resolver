@@ -1,0 +1,13 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: resolver-binding
+spec: 
+  params:
+  - name: mandate
+    value: ""
+
+
+
+  # This TriggerBinding gets some information and saves it in the username variable.
+

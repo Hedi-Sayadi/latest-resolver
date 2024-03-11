@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tekton-resolver
+  namespace: tekton-pipelines-resolvers
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tekton-resolver
+  template:
+    metadata:
+      labels:
+        app: tekton-resolver
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: tekton-resolver
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      serviceAccountName: tekton-pipelines-resolvers
+      containers:
+      - name: resolver
+        image: hedisayadi/resolver-pipeline-and-task-apply:1.0
+        # image: hedisayadi/resolver-pipeline-and-task:1.0 works good with pipeline when triggered through el
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 1000m
+            memory: 1000Mi
+        ports:
+        - name: metrics
+          containerPort: 9090
+        env:
+        - name: SYSTEM_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: CONFIG_LOGGING_NAME
+          value: config-logging
+        - name: CONFIG_OBSERVABILITY_NAME
+          value: config-observability
+        - name: METRICS_DOMAIN
+          value: tekton.dev/resolution
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          runAsNonRoot: true
+          readOnlyRootFilesystem: true
+          seccompProfile:
+            type: RuntimeDefault

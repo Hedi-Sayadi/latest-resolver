@@ -1,0 +1,19 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: resolver-template
+spec:
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1beta1
+    kind: PipelineRun
+    metadata:
+      generateName: resolver-run-
+    spec:
+      pipelineRef:
+        resolver: http
+
+
+
+
+# A TriggerTemplate defines what happens when an event is detected.
+

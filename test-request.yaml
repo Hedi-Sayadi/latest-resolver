@@ -1,0 +1,7 @@
+apiVersion: resolution.tekton.dev/v1beta1
+kind: ResolutionRequest
+metadata:
+  name: test-request-two
+  namespace: tekton-pipelines-resolvers
+  labels:
+    resolution.tekton.dev/type: http
